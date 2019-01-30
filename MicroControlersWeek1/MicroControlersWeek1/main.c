@@ -1,70 +1,113 @@
-/* ---------------------------------------------------------------------------
-** This software is in the public domain, furnished "as is", without technical
-** support, and with no warranty, express or implied, as to its usefulness for
-** any purpose.
-**
-** knipper.c
-**
-** Beschrijving:    Toggle even en oneven leds PORTD  
-** Target:            AVR mcu
-** Build:            avr-gcc -std=c99 -Wall -O3 -mmcu=atmega128 -D F_CPU=8000000UL -c knipper.c
-**                    avr-gcc -g -mmcu=atmega128 -o knipper.elf knipper.o
-**                    avr-objcopy -O ihex knipper.elf knipper.hex 
-**                    or type 'make'
-** Author:             dkroeske@gmail.com
-** -------------------------------------------------------------------------*/
+/*
+*  main.c
+*
+*  Created: 1/30/2019 12:26:15 PM
+*  Author: Ruben, Bart en Olaf
+*/
 
 #define F_CPU 8000000UL
 
 #include <avr/io.h>
 #include <util/delay.h>
 
+void wait(int ms);
+/* OPDRACHT: B.2
+int main(void){
+DDRD = 0b11111111;
 
-/*****************************************************************
-short:            Busy wait number of millisecs
-inputs:            int ms (Number of millisecs to busy wait)
-outputs:    
-notes:            Busy wait, not very accurate. Make sure (external)
-                clock value is set. This is used by _delay_ms inside
-                util/delay.h
-Version :        DMK, Initial code
-*******************************************************************/
-void wait(int ms) {
-    for (int i=0; i<ms; i++) {
-        _delay_ms( 1 );        // library function (max 30 ms at 8MHz)
-    }
+while(1){
+PORTD = 0b1000000;
+wait(250);
+PORTD = 0b0100000;
+wait(250);
+}
+return 1;
+}*/
+
+/* OPDRACHT B.3
+int main(void){
+
+// set PORTD for output
+DDRD = 0b11111111;
+PORTC = 0x10;
+
+while (1)
+{
+if (PINC & 0b00000001)
+{
+PORTD = 0b10000000;
+wait(50);
+PORTD = 0b00000000;
+}
+else
+{
+PORTD = 0x00;
+}
 }
 
-/*****************************************************************
-short:            main() loop, entry point of executable
-inputs:
-outputs:
-notes:            Looping forever, flipping bits on PORTD
-Version :        DMK, Initial code
-*******************************************************************/
-int main(void) {
-    
-    DDRD = 0b11111111;            // All pins PORTD are set to output 
-    //PORTC = 0x10;
-    
-    while (1) {
-        PORTD = 0xAA;            // Write 10101010b PORTD
-        wait( 250 );                
-        PORTD = 0x55;            // Write 01010101b PORTD
-        wait( 250 );                
-    }
-    
+return 1;
+}*/
 
-    /*while (1) {
-        if (PINC & 0x80) {
-            PORTD = 0x01;
-        } else {
-            PORTD = 0x00;
-        }
-    }*/
-    
-    
-    return 1;
+
+/* OPDRACHT B.4
+int main(void){
+DDRD = 0b11111111;
+PORTD = 0b00000001;
+int down = 0;
+
+while(1){
+if(down == 0){
+PORTD = PORTD<< 1;
+}else{
+PORTD = PORTD >> 1;
+}
+if(PORTD & 0x80){
+down = 1;
+}if(PORTD & 0x01){
+down = 0;
+}
+wait(100);
+}
+return 1;
+}*/
+
+/* OPDRACHT B.5*/
+typedef struct {
+	unsigned char data;
+	unsigned int delay ;
+} PATTERN_STRUCT;
+
+PATTERN_STRUCT pattern[] = {
+	{0x00, 100}, {0x01, 100}, {0x02, 100}, {0x04, 100}, {0x10, 100}, {0x20, 100}, {0x40, 100}, {0x80, 100},
+	{0x00, 100},
+	{0xAA,  50}, {0x55,  50},
+	{0xAA,  50}, {0x55,  50},
+	{0xAA,  50}, {0x55,  50},
+	{0x00, 100},
+	{0x81, 100}, {0x42, 100}, {0x24, 100}, {0x18, 100}, {0x0F, 200}, {0xF0, 200}, {0x0F, 200}, {0xF0, 200},
+	{0x00, 0x00}
+};
+
+
+int main(void){
+	DDRD = 0b11111111;
+	
+	while (1==1)
+	{
+		int index = 0;
+		while( pattern[index].delay != 0 ) {
+			PORTD = pattern[index].data;
+			wait(pattern[index].delay);
+			index++;
+		}
+	}
+
+	return 1;
 }
 
 
+void wait(int ms){
+	for(int i = 0; i< ms; i++){
+		_delay_ms(1);
+	}
+}
