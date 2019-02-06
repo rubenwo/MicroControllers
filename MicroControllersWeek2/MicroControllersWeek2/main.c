@@ -26,8 +26,6 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-volatile int definedBit = 0;
-
 /******************************************************************/
 void wait( int ms )
 /*
@@ -56,9 +54,7 @@ notes:			Set PORTD.5
 Version :    	DMK, Initial code
 *******************************************************************/
 {
-	if(definedBit < 7)
-		definedBit++;
-	PORTA = (1<<definedBit);
+	PORTA = (PORTA<<1);
 }
 
 /******************************************************************/
@@ -71,9 +67,7 @@ notes:			Clear PORTD.5
 Version :    	DMK, Initial code
 *******************************************************************/
 {	
-	if(definedBit > -1)
-		definedBit--;
-	PORTA = (1<<definedBit); 
+	PORTA = (PORTA>>1); 
 }
 
 /******************************************************************/
