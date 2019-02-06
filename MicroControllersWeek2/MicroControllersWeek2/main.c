@@ -26,6 +26,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+volatile int definedBit = 0;
 
 /******************************************************************/
 void wait( int ms )
@@ -55,7 +56,9 @@ notes:			Set PORTD.5
 Version :    	DMK, Initial code
 *******************************************************************/
 {
-	PORTD |= (1<<5);
+	if(definedBit < 7)
+		definedBit++;
+	PORTA = (1<<definedBit);
 }
 
 /******************************************************************/
@@ -67,8 +70,10 @@ outputs:
 notes:			Clear PORTD.5
 Version :    	DMK, Initial code
 *******************************************************************/
-{
-	PORTD &= ~(1<<5);
+{	
+	if(definedBit > -1)
+		definedBit--;
+	PORTA = (1<<definedBit); 
 }
 
 /******************************************************************/
@@ -82,20 +87,21 @@ Version :    	DMK, Initial code
 *******************************************************************/
 {
 	// Init I/O
-	DDRD = 0xF0;			// PORTD(7:4) output, PORTD(3:0) input
+	DDRA = 0xFF;			// PORTD(7:4) output, PORTD(3:0) input, 1110 0000
+	PORTA = 0x01;
+	DDRD = 0xF0;
 
 	// Init Interrupt hardware
-	EICRA |= 0x0B;			// INT1 falling edge, INT0 rising edge
-	EIMSK |= 0x03;			// Enable INT1 & INT0
+	EICRA |= 0x0B;			// INT1 falling edge, INT0 rising edge, 0000 1011
+	EIMSK |= 0x03;			// Enable INT1 & INT0, 0000 0011
 	
 	// Enable global interrupt system
-	//SREG = 0x80;			// Of direct via SREG of via wrapper
+	// SREG = 0x80;			// Of direct via SREG of via wrapper, 1000 0000
 	sei();
 
 	while (1)
 	{
-		PORTD ^= (1<<7);	// Toggle PORTD.7
-		wait( 500 );
+		
 	}
 
 	return 1;
