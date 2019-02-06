@@ -26,8 +26,16 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-volatile int definedBit = 0;
+const unsigned char nums[] = {
+	0b00111111, // 0
+	0b00000110,
+	0b01011011,
+	0b01001111,
+	0b01100110,
+};
 
+volatile int definedBit = 0;
+void display(int digit);
 /******************************************************************/
 void wait( int ms )
 /*
@@ -57,7 +65,7 @@ Version :    	DMK, Initial code
 *******************************************************************/
 {
 	if(definedBit < 7)
-		definedBit++;
+	definedBit++;
 	PORTA = (1<<definedBit);
 }
 
@@ -70,10 +78,10 @@ outputs:
 notes:			Clear PORTD.5
 Version :    	DMK, Initial code
 *******************************************************************/
-{	
+{
 	if(definedBit > -1)
-		definedBit--;
-	PORTA = (1<<definedBit); 
+	definedBit--;
+	PORTA = (1<<definedBit);
 }
 
 /******************************************************************/
@@ -101,9 +109,12 @@ Version :    	DMK, Initial code
 
 	while (1)
 	{
-		
 	}
 
 	return 1;
+}
+
+void display(int digit){
+	
 }
 
