@@ -42,7 +42,7 @@ const unsigned char nums[16] = {
 	0b01111001, // E
 	0b11111111, //ERROR
 };
-
+int count= 0;
 volatile int definedBit = 0;
 void display(int digit);
 /******************************************************************/
@@ -76,6 +76,9 @@ Version :    	DMK, Initial code
 	if(definedBit < 7)
 	definedBit++;
 	PORTA = (1<<definedBit);
+	if(count < 15)
+	{count++;}
+	display(count);
 }
 
 /******************************************************************/
@@ -91,6 +94,9 @@ Version :    	DMK, Initial code
 	if(definedBit > -1)
 	definedBit--;
 	PORTA = (1<<definedBit);
+	if(count < 15 && count > 0)
+	{count--;}
+	display(count);
 }
 
 /******************************************************************/
@@ -119,15 +125,9 @@ Version :    	DMK, Initial code
 	// Enable global interrupt system
 	// SREG = 0x80;			// Of direct via SREG of via wrapper, 1000 0000
 	sei();
-	int count = 0;
+	
 	while (1)
 	{
-		
-		display(count);
-		if(count < 16)
-		{count++;}
-		
-		wait(1000);
 		
 	}
 
