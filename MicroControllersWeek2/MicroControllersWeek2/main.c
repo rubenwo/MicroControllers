@@ -38,13 +38,14 @@ const unsigned char nums[16] = {
 	0b01111111, // 8
 	0b01101111, // 9	0b01110111, // A	0b01111100, // B
 	0b00111001, // C
-	0b01011111, // D
+	0b01011110, // D
 	0b01111001, // E
 	0b11111111, //ERROR
 };
 int count= 0;
 volatile int definedBit = 0;
 void display(int digit);
+void patroontje();
 /******************************************************************/
 void wait( int ms )
 /*
@@ -128,7 +129,7 @@ Version :    	DMK, Initial code
 	
 	while (1)
 	{
-		
+		patroontje();
 	}
 
 	return 1;
@@ -136,5 +137,37 @@ Version :    	DMK, Initial code
 
 void display(int digit){
 	PORTC=nums[digit];
+}
+
+void patroontje(){
+	PORTC = 0b00000001;
+	wait(200);
+	PORTC = 0b00000010;
+	wait(200);
+	PORTC = 0b00000100;
+	wait(200);
+	PORTC = 0b00001000;
+	wait(200);
+	PORTC = 0b00010000;
+	wait(200);
+	PORTC = 0b00100000;
+	wait(200);
+	PORTC = 0b00000001;
+	wait(200);
+	
+	PORTC = 0b00100010;
+	wait(200);
+	PORTC = 0b01000000;
+	wait(200);
+	PORTC = 0b00010100;
+	wait(200);
+	PORTC = 0b00001000;
+	wait(200);
+	PORTC = 0b00010100;
+	wait(200);
+	PORTC = 0b01000000;
+	wait(200);
+	PORTC = 0b00100010;
+	wait(200);
 }
 
