@@ -26,12 +26,21 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-const unsigned char nums[] = {
+const unsigned char nums[16] = {
 	0b00111111, // 0
-	0b00000110,
-	0b01011011,
-	0b01001111,
-	0b01100110,
+	0b00000110, // 1
+	0b01011011, // 2
+	0b01001111, // 3
+	0b01100110, // 4
+	0b01101101, // 5
+	0b01111101, // 6
+	0b00000111, // 7
+	0b01111111, // 8
+	0b01101111, // 9	0b01110111, // A	0b01111100, // B
+	0b00111001, // C
+	0b01011111, // D
+	0b01111001, // E
+	0b11111111, //ERROR
 };
 
 volatile int definedBit = 0;
@@ -97,7 +106,11 @@ Version :    	DMK, Initial code
 	// Init I/O
 	DDRA = 0xFF;			// PORTD(7:4) output, PORTD(3:0) input, 1110 0000
 	PORTA = 0x01;
+	PORTC = 0x10;
+	DDRC = 0xFF;
 	DDRD = 0xF0;
+		
+	
 
 	// Init Interrupt hardware
 	EICRA |= 0x0B;			// INT1 falling edge, INT0 rising edge, 0000 1011
@@ -106,15 +119,22 @@ Version :    	DMK, Initial code
 	// Enable global interrupt system
 	// SREG = 0x80;			// Of direct via SREG of via wrapper, 1000 0000
 	sei();
-
+	int count = 0;
 	while (1)
 	{
+		
+		display(count);
+		if(count < 16)
+		{count++;}
+		
+		wait(1000);
+		
 	}
 
 	return 1;
 }
 
 void display(int digit){
-	
+	PORTC=nums[digit];
 }
 
