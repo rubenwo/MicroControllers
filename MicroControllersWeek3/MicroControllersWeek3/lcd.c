@@ -23,25 +23,21 @@ void lcd_write_cmd(unsigned char byte);
 void init(){
 	DDRC = 0xFF;
 	PORTC = 0x00;
-
-	// Step 2 (table 12)
-	PORTC = 0x20;	// function set
+	
+	PORTC = 0x20;
 	lcd_strobe_lcd_e();
 
-	// Step 3 (table 12)
-	PORTC = 0x20;   // function set
+	PORTC = 0x20;
 	lcd_strobe_lcd_e();
 	PORTC = 0x80;
 	lcd_strobe_lcd_e();
 
-	// Step 4 (table 12)
-	PORTC = 0x00;   // Display on/off control
+	PORTC = 0x00;
 	lcd_strobe_lcd_e();
 	PORTC = 0xF0;
 	lcd_strobe_lcd_e();
 
-	// Step 4 (table 12)
-	PORTC = 0x00;   // Entry mode set
+	PORTC = 0x00;
 	lcd_strobe_lcd_e();
 	PORTC = 0x60;
 	lcd_strobe_lcd_e();
@@ -49,6 +45,7 @@ void init(){
 
 void display_text(char *str){
 	for(;*str; str++){
+		_delay_ms(1);
 		lcd_write_data(*str);
 	}
 }
@@ -57,56 +54,34 @@ void set_cursor(int position){
 }
 
 void lcd_write_data(unsigned char byte)
-/*
-short:			Writes 8 bits DATA to lcd
-inputs:			byte - written to LCD
-outputs:
-notes:			According datasheet HD44780 table 12
-Version :    	DMK, Initial code
-*******************************************************************/
 {
-	// First nibble.
 	PORTC = byte;
 	PORTC |= (1<<LCD_RS);
 	lcd_strobe_lcd_e();
 
-	// Second nibble
 	PORTC = (byte<<4);
 	PORTC |= (1<<LCD_RS);
 	lcd_strobe_lcd_e();
 }
-/******************************************************************/
 void lcd_write_command(unsigned char byte)
-/*
-short:			Writes 8 bits COMMAND to lcd
-inputs:			byte - written to LCD
-outputs:
-notes:			According datasheet HD44780 table 12
-Version :    	DMK, Initial code
-*******************************************************************/
 {
-	// First nibble.
 	PORTC = byte;
 	PORTC &= ~(1<<LCD_RS);
 	lcd_strobe_lcd_e();
 
-	// Second nibble
 	PORTC = (byte<<4);
 	PORTC &= ~(1<<LCD_RS);
 	lcd_strobe_lcd_e();
 }
-/******************************************************************/
 void lcd_strobe_lcd_e(void)
-/*
-short:			Strobe LCD module E pin --__
-inputs:
-outputs:
-notes:			According datasheet HD44780
-Version :    	DMK, Initial code
-*******************************************************************/
+
 {
-	PORTC |= (1<<LCD_E);	// E high
-	_delay_ms(1);			// nodig
-	PORTC &= ~(1<<LCD_E);  	// E low
-	_delay_ms(1);			// nodig?
+	PORTC |= (1<<LCD_E);
+	_delay_ms(1);
+	PORTC &= ~(1<<LCD_E);
+	_delay_ms(1);
+}
+
+void clear(void){
+	// Implement clearing
 }
