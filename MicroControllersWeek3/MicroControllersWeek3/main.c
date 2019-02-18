@@ -14,7 +14,7 @@ void wait(int millis)
 	}
 }
 
-
+int overflowCount = 0;
 int tenthValue = 0;
 int TimerPreset = 254;
 int changed = 0;
@@ -22,11 +22,22 @@ static char text[] = "Aantal keer gedrukt: ";
 int aantalKeer = 0;
 
 
-ISR ( TIMER2_OVF_vect ) {
-	aantalKeer++;
-	displayUpdate();
-	TCNT2 = -1;
+int soft_prescale_counter = 0;
+int pulse_pattern_counter = 0;
+int pulse_pattern[] = {15, 25};
+
+ISR(TIMER2_COMP_vect){
+	if((++soft_prescale_counter) > pulse_pattern[pulse_pattern_counter]){
+		PORTD ^= 1;
+		pulse_pattern_counter = (pulse_pattern_counter+1)%2; // switch from software prescaler
+		soft_prescale_counter = 0;
+		
+	}
+	
 }
+
+
+
 
 void displayUpdate() {
 	clr_display();
@@ -36,30 +47,43 @@ void displayUpdate() {
 
 
 int main(void)
-{
-	DDRB = 0xFF;
-	DDRC = 0xFF;
-	DDRD = 0x00;
+{	
+	DDRD = 0xff;
+	PORTD = 1;											// has to begin at on when you want your bit at the port on until another interupt
+	TCNT2 = 0;
+	OCR2 = 0x08;
+	TCCR2 = (1 << WGM21) | (1 << CS20)| (1 << CS22);	// [1] Set WGM21 to enable CTC mode, [2] Set Prescaler to 1024 a.k.a enable Bits CS20 and CS22
+	TIMSK = (1 << OCIE2);								// Set interrupt mask to fire on comparator events
+	sei();												// set global interupt flag
 	
-	TCNT2 = -1;
-	TIMSK |= (1 << 6);
-	SREG |= (1 << 7);
-	TCCR2 = 0b0000111;
-	sei();
-	
-	PORTC = 0x00;
-	
-	init();
-	clr_display();
-	int length = strlen(text) + 1;
-	while (1)
-	{
-		for(int x = 0; x< length; x++) {
-			PORTB = TCNT2;
-			set_display(1);
-			wait(250);
-		}
+	while(1){
+		// busy waiting
 	}
+
+	sei();
+	//DDRB = 0xFF;
+	//DDRC = 0xFF;
+	//DDRD = 0x00;
+	//
+	//TCNT2 = -1;
+	//TIMSK |= (1 << 6);
+	//SREG |= (1 << 7);
+	//TCCR2 = 0b0000111;
+	//sei();
+	//
+	//PORTC = 0x00;
+	//
+	//init();
+	//clr_display();
+	//int length = strlen(text) + 1;
+	//while (1)
+	//{
+	//for(int x = 0; x< length; x++) {
+	//PORTB = TCNT2;
+	//set_display(1);
+	//wait(250);
+	//}
+	//}
 	
 	return 0;
 }
