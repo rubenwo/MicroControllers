@@ -1,9 +1,3 @@
-/*
-* MicroControllersWeek3.c
-*
-* Created: 2/13/2019 10:36:07 AM
-* Author :
-*/
 #define F_CPU 8000000UL
 #define BIT(x) (1<<x)
 #include <avr/io.h>
@@ -24,58 +18,50 @@ void wait(int millis)
 int tenthValue = 0;
 int TimerPreset = 254;
 int changed = 0;
+static char text[] = "Aantal keer gedrukt: ";
+int aantalKeer = 0;
 
 
-ISR(TIMER2_COMP_vect)
-{
-	TCNT2 = TimerPreset;
-	tenthValue++;
-	changed++;
+ISR ( TIMER2_OVF_vect ) {
+	aantalKeer++;
+	displayUpdate();
+	TCNT2 = -1;
 }
 
-void timer2Init( void )
-{
-	TCNT2 = TimerPreset; // Preset value of counter 2
-	TIMSK |= BIT(6); // T2 overflow interrupt enable
-
-	SREG |= BIT(7);
-
-	TCCR2 = 0x07; // Initialize T2: ext.counting, rising edge, run
+void displayUpdate() {
+	clr_display();
+	display_text(text);
+	lcd_writeChar(aantalKeer+'0');
 }
+
 
 int main(void)
 {
-	DDRD &= ~BIT(7);
-	DDRA = 0xFF;
 	DDRB = 0xFF;
-
-	//DDRD = 0xFF;
-	init();
-	timer2Init();
+	DDRC = 0xFF;
+	DDRD = 0x00;
+	
+	TCNT2 = -1;
+	TIMSK |= (1 << 6);
+	SREG |= (1 << 7);
+	TCCR2 = 0b0000111;
 	sei();
-
-	//opdr. B1
-	//display_text("Hello world!");
-	int t = 0;
+	
+	PORTC = 0x00;
+	
+	init();
+	clr_display();
+	int length = strlen(text) + 1;
 	while (1)
 	{
-		PORTA = TCNT2; // show value counter 2
-		PORTB = tenthValue; // show value tenth counter
-		if(t == 50){
-			t = 0;
-			changed = 1;
+		for(int x = 0; x< length; x++) {
+			PORTB = TCNT2;
+			set_display(1);
+			wait(250);
 		}
-		t++;
-		if(changed != 0){
-			char str[10];
-			sprintf(str, "%d", tenthValue);
-			//uint8_t data = tenthValue + 48;
-			display_text("FUCK YOU");
-
-			changed = 0;
-		}
-		wait(100);
 	}
+	
+	return 0;
 }
 
 /*

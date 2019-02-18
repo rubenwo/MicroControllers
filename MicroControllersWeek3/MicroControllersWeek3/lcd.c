@@ -1,87 +1,66 @@
-/*
-* lcd.c
-*
-* Created: 2/13/2019 10:48:19 AM
-*  Author: diabl
-*/
-#define F_CPU 8000000UL
-
-#include "lcd.h"
+#define F_CPU 8000000
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
+#include <avr/delay.h>
+#include <string.h>
+#include "LCD.h"
 
-#define LCD_E 	3
-#define LCD_RS	2
-
-void lcd_strobe_lcd_e(void);
-void lcd_write_string(char *str);
-void lcd_write_data(unsigned char byte);
-void lcd_write_cmd(unsigned char byte);
-
-void init(){
-	DDRC = 0xFF;
-	PORTC = 0x00;
-	
-	PORTC = 0x20;
-	lcd_strobe_lcd_e();
-
-	PORTC = 0x20;
-	lcd_strobe_lcd_e();
-	PORTC = 0x80;
-	lcd_strobe_lcd_e();
-
-	PORTC = 0x00;
-	lcd_strobe_lcd_e();
-	PORTC = 0xF0;
-	lcd_strobe_lcd_e();
-
-	PORTC = 0x00;
-	lcd_strobe_lcd_e();
-	PORTC = 0x60;
-	lcd_strobe_lcd_e();
+void init() {
+	lcd_command( 0x02 );
+	lcd_command( 0x28 );
+	lcd_command( 0x0C );
+	lcd_command( 0x06 ); 
+	lcd_command( 0x80 );
 }
 
-void display_text(char *str){
-	for(;*str; str++){
-		_delay_ms(1);
-		lcd_write_data(*str);
+void display_text(char *str) {
+	_delay_ms(1);
+	int length = strlen(str);
+	for(int x = 0; x < length; x++) {
+		lcd_writeChar(str[x]);
 	}
 }
-void set_cursor(int position){
-	
-}
 
-void lcd_write_data(unsigned char byte)
-{
-	PORTC = byte;
-	PORTC |= (1<<LCD_RS);
-	lcd_strobe_lcd_e();
-
-	PORTC = (byte<<4);
-	PORTC |= (1<<LCD_RS);
-	lcd_strobe_lcd_e();
-}
-void lcd_write_command(unsigned char byte)
-{
-	PORTC = byte;
-	PORTC &= ~(1<<LCD_RS);
-	lcd_strobe_lcd_e();
-
-	PORTC = (byte<<4);
-	PORTC &= ~(1<<LCD_RS);
-	lcd_strobe_lcd_e();
-}
-void lcd_strobe_lcd_e(void)
-
-{
-	PORTC |= (1<<LCD_E);
+void set_display(int pos) {
 	_delay_ms(1);
-	PORTC &= ~(1<<LCD_E);
-	_delay_ms(1);
+	for(int x = 0; x < pos; x++) {
+		lcd_command(0b0000011000);
+	}
 }
 
-void clear(void){
-	// Implement clearing
+void set_cursor(int pos){
+	_delay_ms(1);
+	clr_display();
+	for(int x = 0; x < pos; x++) {
+		lcd_command(0b0000010100);
+	}
+}
+
+void clr_display() {
+	_delay_ms(1);
+	lcd_command(0x01);
+}
+
+void lcd_writeChar( unsigned char dat )
+{
+	PORTC = dat & 0xF0; 
+	PORTC = PORTC | 0x0C;
+	_delay_ms(1); 
+	PORTC = 0x04; 
+	PORTC = (dat & 0x0F) << 4;
+	PORTC = PORTC | 0x0C;
+	_delay_ms(1); 
+	PORTC = 0x00;
+}
+
+void lcd_command ( unsigned char dat )
+{
+	PORTC = dat & 0xF0; 
+	PORTC = PORTC | 0x08;
+	_delay_ms(1);
+	PORTC = 0x04; 
+	PORTC = (dat & 0x0F) << 4; 
+	PORTC = PORTC | 0x08; 
+	_delay_ms(1); 
+	PORTC = 0x00; 
 }
