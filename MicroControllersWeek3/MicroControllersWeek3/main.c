@@ -22,15 +22,15 @@ static char text[] = "Aantal keer gedrukt: ";
 int aantalKeer = 0;
 
 
-int soft_prescale_counter = 0;
-int pulse_pattern_counter = 0;
+int counter = 0;
+int pulse_counter = 0;
 int pulse_pattern[] = {15, 25};
 
 ISR(TIMER2_COMP_vect){
-	if((++soft_prescale_counter) > pulse_pattern[pulse_pattern_counter]){
+	if((++counter) > pulse_pattern[pulse_counter]){
 		PORTD ^= 1;
-		pulse_pattern_counter = (pulse_pattern_counter+1)%2; // switch from software prescaler
-		soft_prescale_counter = 0;
+		pulse_counter = (pulse_counter+1)%2; 
+		counter = 0;
 		
 	}
 	
@@ -49,15 +49,15 @@ void displayUpdate() {
 int main(void)
 {	
 	DDRD = 0xff;
-	PORTD = 1;											// has to begin at on when you want your bit at the port on until another interupt
+	PORTD = 1;											
 	TCNT2 = 0;
 	OCR2 = 0x08;
-	TCCR2 = (1 << WGM21) | (1 << CS20)| (1 << CS22);	// [1] Set WGM21 to enable CTC mode, [2] Set Prescaler to 1024 a.k.a enable Bits CS20 and CS22
-	TIMSK = (1 << OCIE2);								// Set interrupt mask to fire on comparator events
-	sei();												// set global interupt flag
+	TCCR2 = (1 << WGM21) | (1 << CS20)| (1 << CS22);	
+	TIMSK = (1 << OCIE2);								
+	sei();												
 	
 	while(1){
-		// busy waiting
+	
 	}
 
 	sei();
