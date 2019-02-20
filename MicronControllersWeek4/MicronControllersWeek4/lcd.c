@@ -1,9 +1,17 @@
+/*
+* lcd.c
+*
+* Created: 2/20/2019 11:43:05 AM
+*  Author: Ruben
+*/
 #define F_CPU 8000000
 
 #include <avr/io.h>
 #include <avr/delay.h>
 #include <string.h>
 #include "lcd.h"
+
+void lcd_writeChar( unsigned char dat );
 
 void init() {
 	lcd_command( 0x02 );
@@ -17,6 +25,7 @@ void display_text(char *str) {
 	_delay_ms(1);
 	int length = strlen(str);
 	for(int x = 0; x < length; x++) {
+		_delay_ms(1);
 		lcd_writeChar(str[x]);
 	}
 }
