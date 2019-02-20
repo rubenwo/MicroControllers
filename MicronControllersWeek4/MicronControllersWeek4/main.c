@@ -14,7 +14,6 @@ int main(void)
 	//DoB1();
 	//DoB2();
 	DoB3();
-	
 }
 
 

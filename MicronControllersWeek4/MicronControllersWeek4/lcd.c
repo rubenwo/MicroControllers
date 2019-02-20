@@ -11,6 +11,8 @@
 #include <string.h>
 #include "lcd.h"
 
+void lcd_writeChar( unsigned char dat );
+
 void init() {
 	lcd_command( 0x02 );
 	lcd_command( 0x28 );
@@ -23,6 +25,7 @@ void display_text(char *str) {
 	_delay_ms(1);
 	int length = strlen(str);
 	for(int x = 0; x < length; x++) {
+		_delay_ms(1);
 		lcd_writeChar(str[x]);
 	}
 }
