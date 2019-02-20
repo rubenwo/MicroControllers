@@ -3,13 +3,13 @@
 #include <avr/io.h>
 #include <avr/delay.h>
 #include <string.h>
-#include "LCD.h"
+#include "lcd.h"
 
 void init() {
 	lcd_command( 0x02 );
 	lcd_command( 0x28 );
 	lcd_command( 0x0C );
-	lcd_command( 0x06 ); 
+	lcd_command( 0x06 );
 	lcd_command( 0x80 );
 }
 
@@ -43,24 +43,24 @@ void clr_display() {
 
 void lcd_writeChar( unsigned char dat )
 {
-	PORTC = dat & 0xF0; 
+	PORTC = dat & 0xF0;
 	PORTC = PORTC | 0x0C;
-	_delay_ms(1); 
-	PORTC = 0x04; 
+	_delay_ms(1);
+	PORTC = 0x04;
 	PORTC = (dat & 0x0F) << 4;
 	PORTC = PORTC | 0x0C;
-	_delay_ms(1); 
+	_delay_ms(1);
 	PORTC = 0x00;
 }
 
 void lcd_command ( unsigned char dat )
 {
-	PORTC = dat & 0xF0; 
+	PORTC = dat & 0xF0;
 	PORTC = PORTC | 0x08;
 	_delay_ms(1);
-	PORTC = 0x04; 
-	PORTC = (dat & 0x0F) << 4; 
-	PORTC = PORTC | 0x08; 
-	_delay_ms(1); 
-	PORTC = 0x00; 
+	PORTC = 0x04;
+	PORTC = (dat & 0x0F) << 4;
+	PORTC = PORTC | 0x08;
+	_delay_ms(1);
+	PORTC = 0x00;
 }
