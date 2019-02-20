@@ -138,6 +138,30 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="b1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="b1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="b2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="b2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="b3.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="b3.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lcd.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lcd.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
