@@ -7,12 +7,12 @@
 
 #include <avr/io.h>
 
-#include "C.h"
-//#include "C1.h"
+//#include "C.h"
+#include "C1.h"
 
 int main(void)
 {
-	DoAssignmentC();
-//	DoAssignmentC1();
+	//DoAssignmentC();
+	DoAssignmentC1();
 }
 
