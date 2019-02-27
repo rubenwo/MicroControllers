@@ -71,7 +71,7 @@ void displayDriverInit()
 
 	spi_slaveSelect(0);
 	spi_write(0x0A);
-	spi_write(0x0F);
+	spi_write(0x0F);			// Set intensity level over 9000!!!! (max)
 	spi_slaveDeSelect(0);
 
 	spi_slaveSelect(0);
